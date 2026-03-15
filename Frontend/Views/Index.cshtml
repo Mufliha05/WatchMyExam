@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Live Exam";
+}
+
+<div class="container mt-4">
+
+    <h2>📝 WatchMyExams - Live Exam</h2>
+
+    <div class="row mt-4">
+
+        <!-- Question Section -->
+        <div class="col-md-8">
+
+            <div class="card">
+
+                <div class="card-header">
+                    Question 1
+                </div>
+
+                <div class="card-body">
+
+                    <p>What is the primary function of an operating system?</p>
+
+                    <div>
+                        <input type="radio" name="q1"> Manage hardware resources<br>
+                        <input type="radio" name="q1"> Edit images<br>
+                        <input type="radio" name="q1"> Play music<br>
+                        <input type="radio" name="q1"> Browse internet
+                    </div>
+
+                    <br>
+
+                    <button class="btn btn-secondary">Previous</button>
+                    <button class="btn btn-primary">Next</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Monitoring Section -->
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-header">
+                    📷 Monitoring Camera
+                </div>
+
+                <div class="card-body text-center">
+
+                    <video id="examCamera" width="250" height="200" autoplay></video>
+
+                    <p class="text-success">Monitoring Active</p>
+
+                </div>
+
+            </div>
+
+            <div class="card mt-3">
+
+                <div class="card-header">
+                    ⏱ Exam Timer
+                </div>
+
+                <div class="card-body text-center">
+
+                    <h3 id="timer">30:00</h3>
+
+                </div>
+
+            </div>
+
+            <button class="btn btn-danger mt-3 w-100">
+                Submit Exam
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream){
+
+    document.getElementById("examCamera").srcObject = stream;
+
+    });
+
+</script>
+<script>
+
+    var time = 1800;
+
+    var timer = setInterval(function(){
+
+    var minutes = Math.floor(time / 60);
+    var seconds = time % 60;
+
+    document.getElementById("timer").innerText =
+    minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+    time--;
+
+    if(time < 0){
+    clearInterval(timer);
+    alert("Exam Time Over");
+    }
+
+    },1000);
+
+</script>

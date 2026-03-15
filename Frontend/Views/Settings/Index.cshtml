@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Settings";
+}
+
+<h2>⚙ Settings</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+
+        <h5>Profile</h5>
+
+        <div class="mb-3">
+            <label>Name</label>
+            <input type="text" class="form-control" value="Student Name">
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" value="student@email.com">
+        </div>
+
+        <hr>
+
+        <h5>Appearance</h5>
+
+        <button class="btn btn-dark" onclick="toggleDarkMode()">
+            🌙 Toggle Dark Mode
+        </button>
+
+    </div>
+</div>
+<script>
+
+    function toggleDarkMode(){
+
+    document.body.classList.toggle("bg-dark");
+    document.body.classList.toggle("text-white");
+
+    }
+
+</script>

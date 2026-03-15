@@ -1,0 +1,194 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+
+    ```
+    <h2 class="mb-4 fw-bold">📊 Student Dashboard</h2>
+
+    <!-- DASHBOARD STATS -->
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h5>📚 Total Exams</h5>
+                    <h2>5</h2>
+                    <p class="small">All registered exams</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-success text-white shadow">
+                <div class="card-body">
+                    <h5>✅ Completed Exams</h5>
+                    <h2>3</h2>
+                    <p class="small">Successfully submitted</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <h5>⚠ Violations</h5>
+                    <h2 id="violationStat">2</h2>
+                    <p class="small">Detected activities</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card dashboard-card bg-danger text-white shadow">
+                <div class="card-body">
+                    <h5>🛡 Integrity Score</h5>
+                    <h2>92%</h2>
+                    <p class="small">Based on exam behaviour</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- ANALYTICS + RECENT ACTIVITY -->
+
+    <div class="row g-4">
+
+        <!-- VIOLATION CHART -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header fw-bold">
+                    📈 Violation Analytics
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="violationChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header fw-bold">
+                    🕒 Recent Activity
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Exam</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Operating Systems</td>
+                                <td>10 Mar</td>
+                                <td class="text-success fw-bold">Completed</td>
+                            </tr>
+
+                            <tr>
+                                <td>Database Systems</td>
+                                <td>12 Mar</td>
+                                <td class="text-warning fw-bold">Scheduled</td>
+                            </tr>
+
+                            <tr>
+                                <td>Computer Networks</td>
+                                <td>15 Mar</td>
+                                <td class="text-danger fw-bold">Violation Detected</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    ```
+
+</div>
+
+<!-- DASHBOARD STYLE -->
+
+<style>
+
+    .dashboard-card {
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+
+        .dashboard-card:hover {
+            transform: scale(1.03);
+        }
+
+    .card {
+        border-radius: 12px;
+    }
+
+</style>
+
+<!-- CHART SCRIPT -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    var ctx = document.getElementById('violationChart');
+
+    new Chart(ctx, {
+
+    type: 'pie',
+
+    data: {
+
+    labels: ['Head Movement','Looking Away','Tab Switch'],
+
+    datasets: [{
+
+    data: [3,2,1],
+
+    backgroundColor:[
+    '#ff6384',
+    '#ffcd56',
+    '#36a2eb'
+    ]
+
+    }]
+
+    },
+
+    options:{
+    responsive:true
+    }
+
+    });
+
+</script>

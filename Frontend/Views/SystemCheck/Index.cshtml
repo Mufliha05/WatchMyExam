@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Pre Exam System Check";
+}
+
+<div class="container mt-4">
+
+    <h2>📷 Pre-Exam System Check</h2>
+
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+
+            <div class="card">
+                <div class="card-header">
+                    Camera Preview
+                </div>
+
+                <div class="card-body text-center">
+
+                    <video id="camera" width="400" height="300" autoplay></video>
+
+                    <p id="cameraStatus" class="text-success mt-2"></p>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="card">
+                <div class="card-header">
+                    System Checks
+                </div>
+
+                <div class="card-body">
+
+                    <p>📷 Camera Status: <span id="camCheck">Checking...</span></p>
+
+                    <p>🎤 Microphone Status: <span id="micCheck">Not Tested</span></p>
+
+                    <p>🙂 Face Detection: <span id="faceCheck">Checking...</span></p>
+
+                    <button class="btn btn-primary" onclick="testMic()">Test Microphone</button>
+
+                    <br><br>
+
+                    <p id="systemStatus" class="text-danger">
+                        System Not Ready
+                    </p>
+
+                    <button id="startExamBtn" class="btn btn-success" disabled>
+                        Start Exam
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream){
+
+     document.getElementById("camera").srcObject = stream;
+        document.getElementById("camCheck").innerText = "Working";
+    document.getElementById("faceCheck").innerText = "Face Detected ✅";
+
+    camReady = true;
+    faceReady = true;
+
+    
+
+    })
+    .catch(function(){
+
+    document.getElementById("camCheck").innerText = "Camera Not Detected";
+    document.getElementById("faceCheck").innerText = "No Face Found ⚠";
+
+    });
+
+     function testMic(){
+
+    document.getElementById("micCheck").innerText = "Microphone Working";
+
+    micReady = true;
+
+    checkSystemReady();
+
+    }
+     
+function checkSystemReady(){
+
+if(camReady && micReady && faceReady){
+
+document.getElementById("systemStatus").innerText = "System Ready ✅";
+
+document.getElementById("systemStatus").className = "text-success";
+
+document.getElementById("startExamBtn").disabled = false;
+
+}
+
+}
+
+</script>

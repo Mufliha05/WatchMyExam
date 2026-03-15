@@ -1,0 +1,33 @@
+﻿<h2>📧 Admin Email Alerts</h2>
+
+<table class="table table-bordered">
+
+	<thead>
+		<tr>
+			<th>Time</th>
+			<th>Alert</th>
+		</tr>
+	</thead>
+
+	<tbody id="alertTable"></tbody>
+
+</table>
+
+<script>
+
+	var alerts = JSON.parse(localStorage.getItem("emailAlerts")) || [];
+
+	var table = document.getElementById("alertTable");
+
+	alerts.forEach(function(a){
+
+	var row = "<tr>" +
+	"<td>"+a.time+"</td>" +
+	"<td>"+a.type+"</td>" +
+	"</tr>";
+
+	table.innerHTML += row;
+
+	});
+
+</script>

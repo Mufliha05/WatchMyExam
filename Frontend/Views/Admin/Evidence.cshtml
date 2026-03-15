@@ -1,0 +1,50 @@
+﻿@{
+	ViewData["Title"] = "Cheating Evidence";
+}
+
+<h2 class="mb-4">📷 Cheating Evidence Gallery</h2>
+
+<div class="row" id="evidenceGallery"></div>
+
+<script>
+
+	var evidence = JSON.parse(localStorage.getItem("evidence")) || [];
+
+	var gallery = document.getElementById("evidenceGallery");
+
+	if(evidence.length === 0){
+
+	gallery.innerHTML =
+	"<div class='alert alert-info'>No cheating evidence recorded.</div>";
+
+	}
+	else{
+
+	for(var i=0;i<evidence.length;i++){
+
+	var item = evidence[i];
+
+	gallery.innerHTML +=
+
+	`<div class="col-md-4 mb-4">
+
+	<div class="card shadow">
+
+	<img src="${item.image}" class="card-img-top">
+
+	<div class="card-body">
+
+	<h6>⚠ ${item.type}</h6>
+	<p>⏰ ${item.time}</p>
+
+	</div>
+
+	</div>
+
+	</div>`;
+
+	}
+
+	}
+
+</script>

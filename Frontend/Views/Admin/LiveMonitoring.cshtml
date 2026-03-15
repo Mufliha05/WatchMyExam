@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Live Monitoring";
+}
+
+<h2>👨‍🏫 Admin Live Monitoring Dashboard</h2>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Exam</th>
+                    <th>Integrity Score</th>
+                    <th>Violations</th>
+                    <th>Latest Screenshot</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <!-- Live data will appear here -->
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<script>
+
+    function updateAdminDashboard(){
+        var tbody = document.getElementById("studentTableBody");
+        tbody.innerHTML = "";
+
+        // Simulate students currently in exam
+        var students = JSON.parse(localStorage.getItem("studentsInExam")) || [
+            {name:"Srusti", exam:"OS Exam"},
+            {name:"Alice", exam:"DBMS Exam"}
+        ];
+
+        students.forEach(function(student){
+            var violations = Math.floor(Math.random()*6); // simulate violations
+            var integrity = Math.max(100 - violations*5, 0);
+
+            var screenshots = JSON.parse(localStorage.getItem("examScreenshots")) || [];
+            var latestScreenshot = screenshots.length>0 ? `<img src="${screenshots[screenshots.length-1].image}" width="100"/>` : "No screenshot";
+
+            var row = `<tr>
+                <td>${student.name}</td>
+                <td>${student.exam}</td>
+                <td>${integrity}%</td>
+                <td>${violations}</td>
+                <td>${latestScreenshot}</td>
+            </tr>`;
+
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Update every 10 seconds
+    setInterval(updateAdminDashboard,10000);
+
+    // Initial load
+    updateAdminDashboard();
+
+</script>

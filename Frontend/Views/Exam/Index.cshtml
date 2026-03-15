@@ -1,0 +1,419 @@
+﻿@{
+	ViewData["Title"] = "Live Exam";
+}
+
+<h2>📝 Live Exam</h2>
+
+<!-- TIMER -->
+
+<div class="alert alert-warning text-center">
+	⏱ Time Remaining: <span id="examTimer">30:00</span>
+</div>
+
+<!-- INTEGRITY SCORE -->
+
+<div class="alert alert-info">
+	Integrity Score: <span id="score">100</span>%
+</div>
+
+<!-- ALERT -->
+
+<div id="alertBox" class="alert alert-danger" style="display:none;"></div>
+
+<div class="row">
+
+	<!-- QUESTIONS -->
+
+	<div class="col-md-8">
+
+		<div class="card shadow">
+
+			<div class="card-header">
+				<span id="questionNumber"></span>
+			</div>
+
+			<div class="card-body">
+
+				<p id="questionText"></p>
+
+				<div id="optionsArea"></div>
+
+				<br>
+
+				<button class="btn btn-secondary" onclick="prevQuestion()">Previous</button>
+
+				<button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- MONITORING -->
+
+	<div class="col-md-4">
+
+		<div class="card shadow">
+
+			<div class="card-header bg-dark text-white">
+				🎥 AI Monitoring
+			</div>
+
+			<div class="card-body text-center">
+
+				<video id="cameraPreview" width="100%" autoplay></video>
+
+				<canvas id="screenshotCanvas" style="display:none;"></canvas>
+
+				<br><br>
+
+				<p>Status: <span class="text-success">Monitoring Active</span></p>
+
+				<p>
+					Violations Detected:
+					<span id="violationCount">0</span>
+				</p>
+
+				<button class="btn btn-danger" onclick="addViolation('Test Violation')">
+					Test Violation
+				</button>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- WARNING POPUP -->
+
+<div id="cheatWarning"
+	 style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.8); z-index:9999; text-align:center; padding-top:200px;">
+
+	<div style="background:white; width:400px; margin:auto; padding:30px; border-radius:10px; box-shadow:0 0 20px red;">
+
+		<h2 style="color:red;">🚨 CHEATING DETECTED</h2>
+
+		<p>Please focus on the exam window.</p>
+
+		<button class="btn btn-danger" onclick="closeWarning()">Continue Exam</button>
+
+	</div>
+
+</div>
+<script>
+
+	document.addEventListener("DOMContentLoaded", function(){
+
+	/* QUESTIONS DATA */
+
+	var questions = [
+	{
+	question: "What is the primary function of an operating system?",
+	options: [
+	"Manage hardware resources",
+	"Edit images",
+	"Play music",
+	"Browse internet"
+	]
+	},
+	{
+	question: "Which device is used for input?",
+	options: [
+	"Monitor",
+	"Keyboard",
+	"Printer",
+	"Speaker"
+	]
+	},
+	{
+	question: "What does CPU stand for?",
+	options: [
+	"Central Processing Unit",
+	"Computer Personal Unit",
+	"Central Program Utility",
+	"Control Processing Unit"
+	]
+	}
+	];
+
+
+	/* QUESTION VARIABLES */
+
+	var currentQuestion = 0;
+	var answers = [];
+
+
+	/* LOAD QUESTION */
+
+	function loadQuestion(){
+
+	var q = questions[currentQuestion];
+
+	document.getElementById("questionNumber").innerText =
+	"Question " + (currentQuestion+1) + " of " + questions.length;
+
+	document.getElementById("questionText").innerText = q.question;
+
+	var html="";
+
+	for(var i=0;i<q.options.length;i++){
+
+	html += `
+	<div>
+	<label>
+	<input type="radio" name="answer" value="${i}" onclick="saveAnswer(${i})">
+	${q.options[i]}
+	</label>
+	</div>
+	`;
+
+	}
+
+	document.getElementById("optionsArea").innerHTML = html;
+
+	if(answers[currentQuestion] !== undefined){
+
+	var radios=document.getElementsByName("answer");
+	radios[answers[currentQuestion]].checked=true;
+
+	}
+
+	}
+
+
+	/* SAVE ANSWER */
+
+	window.saveAnswer=function(i){
+	answers[currentQuestion]=i;
+	}
+
+
+	/* NEXT QUESTION */
+
+	window.nextQuestion=function(){
+
+	if(currentQuestion < questions.length-1){
+	currentQuestion++;
+	loadQuestion();
+	}
+
+	}
+
+
+	/* PREVIOUS QUESTION */
+
+	window.prevQuestion=function(){
+
+	if(currentQuestion > 0){
+	currentQuestion--;
+	loadQuestion();
+	}
+
+	}
+
+
+	/* START EXAM */
+
+	loadQuestion();
+
+
+
+	/* CAMERA */
+
+	navigator.mediaDevices.getUserMedia({video:true})
+
+	.then(function(stream){
+	document.getElementById("cameraPreview").srcObject=stream;
+	})
+
+	.catch(function(){
+	showAlert("Camera not detected");
+	});
+
+
+
+	/* ALERT */
+
+	window.showAlert=function(msg){
+
+	var box=document.getElementById("alertBox");
+
+	box.innerText="⚠ "+msg;
+	box.style.display="block";
+
+	setTimeout(()=>box.style.display="none",3000);
+
+	}
+
+
+
+	/* MONITORING VARIABLES */
+
+	var violations=0;
+	var integrityScore=100;
+	var maxViolations=5;
+
+
+
+	/* VIOLATION HANDLER */
+
+	window.addViolation=function(type){
+
+	violations++;
+
+	document.getElementById("violationCount").innerText=violations;
+
+	integrityScore -= 5;
+	if(integrityScore<0) integrityScore=0;
+
+	document.getElementById("score").innerText=integrityScore;
+
+	showAlert(type);
+	showWarning();
+
+	captureScreenshot(type);
+
+	triggerSiren();
+
+
+	/* TERMINATE AFTER 5 */
+
+	if(violations>=maxViolations){
+
+	setTimeout(function(){
+
+	alert("❌ Exam terminated due to multiple violations.");
+
+	window.location.href="/Dashboard";
+
+	},1500);
+
+	}
+
+	}
+
+
+
+	/* SCREENSHOT */
+
+	function captureScreenshot(type){
+
+	var video=document.getElementById("cameraPreview");
+	var canvas=document.getElementById("screenshotCanvas");
+	var ctx=canvas.getContext("2d");
+
+	if(!video.srcObject) return;
+
+	canvas.width=video.videoWidth || 640;
+	canvas.height=video.videoHeight || 480;
+
+	ctx.drawImage(video,0,0,canvas.width,canvas.height);
+
+	var image=canvas.toDataURL("image/png");
+
+	var evidence=JSON.parse(localStorage.getItem("evidence"))||[];
+
+	evidence.push({
+	image:image,
+	type:type,
+	time:new Date().toLocaleString()
+	});
+
+	localStorage.setItem("evidence",JSON.stringify(evidence));
+
+	}
+
+
+
+	/* SIREN */
+
+	var alarm=new Audio('/sounds/alarm.mp3');
+
+	document.addEventListener("click",function(){
+	alarm.play().then(()=>alarm.pause());
+	},{once:true});
+
+	function triggerSiren(){
+
+	alarm.currentTime=0;
+	alarm.play().catch(()=>{});
+
+	}
+
+
+
+	/* TAB SWITCH */
+
+	document.addEventListener("visibilitychange",function(){
+
+	if(document.hidden){
+	addViolation("Tab Switching Detected");
+	}
+
+	});
+
+
+
+	/* RANDOM AI SIMULATION */
+
+	setInterval(function(){
+
+	var alerts=[
+	"Head Movement Detected",
+	"Looking Away From Screen",
+	"Multiple Faces Detected"
+	];
+
+	var randomAlert=alerts[Math.floor(Math.random()*alerts.length)];
+
+	addViolation(randomAlert);
+
+	},20000);
+
+
+
+	/* TIMER */
+
+	var totalTime=30*60;
+
+	var timer=setInterval(function(){
+
+	var m=Math.floor(totalTime/60);
+	var s=totalTime%60;
+
+	if(s<10)s="0"+s;
+
+	document.getElementById("examTimer").innerText=m+":"+s;
+
+	totalTime--;
+
+	if(totalTime<=0){
+
+	clearInterval(timer);
+
+	alert("⏰ Time is up! Exam submitted.");
+
+	window.location.href="/Dashboard";
+
+	}
+
+	},1000);
+
+	});
+
+
+
+	function showWarning(){
+	document.getElementById("cheatWarning").style.display="block";
+	}
+
+	function closeWarning(){
+	document.getElementById("cheatWarning").style.display="none";
+	}
+
+</script>
+

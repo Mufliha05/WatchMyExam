@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Integrity History";
+}
+
+<h2>⚠ Integrity History</h2>
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+
+        <tr>
+            <th>Time</th>
+            <th>Violation</th>
+            <th>Status</th>
+        </tr>
+
+    </thead>
+
+    <tbody id="historyTable">
+    </tbody>
+
+</table>
+
+
+<script>
+
+    var logs = JSON.parse(localStorage.getItem("violationLog")) || [];
+
+    var table = document.getElementById("historyTable");
+
+    logs.forEach(function(log){
+
+    var row = "<tr>" +
+    "<td>" + log.time + "</td>" +
+    "<td>" + log.type + "</td>" +
+    "<td class='text-danger'>Warning</td>" +
+    "</tr>";
+
+    table.innerHTML += row;
+
+    });
+
+</script>
